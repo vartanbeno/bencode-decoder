@@ -22,6 +22,7 @@ class TestBencode(TestCase):
     def test_decode_string_fail(self):
         self.assertRaises(DecodeException, decode, '-1:test')
         self.assertRaises(DecodeException, decode, 'test')
+        self.assertRaises(DecodeException, decode, ':test')
         self.assertRaises(DecodeException, decode, '5:test')
         self.assertRaises(DecodeException, decode, '5test')
         self.assertRaises(DecodeException, decode, '1:')
@@ -71,7 +72,7 @@ class TestBencode(TestCase):
         self.assertRaises(DecodeException, decode, 'liee')
         self.assertRaises(DecodeException, decode, 'l4:e')
 
-    def test_decode_dictionary(self):
+    def test_decode_dictionary_success(self):
         foo, _ = decode('de')
         self.assertEqual(foo, OrderedDict())
 

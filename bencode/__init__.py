@@ -4,6 +4,14 @@ from bencode.exceptions import DecodeException
 
 
 def decode(b, start_index=0):
+    """
+    Decode a bencode into either a string, an int, a list, or a dictionary.
+    The type it gets converted to depends on the bencode's format.
+    We look at the first character of the bencode and call the appropriate function for each type.
+    :param b: the bencoded string
+    :param start_index: the index of the string from which we will start decoding
+    :return: the decoded bencode
+    """
     try:
         return decoding_functions[b[0]](b, start_index)
     except (IndexError, KeyError):
@@ -74,7 +82,7 @@ def decode_list(b, start_index=0):
             decoded_list.append(content)
         return decoded_list, start_index + 1
     except (IndexError, ValueError):
-        raise DecodeException('Cannot decode int: invalid bencode provided.')
+        raise DecodeException('Cannot decode list: invalid bencode provided.')
 
 
 def decode_dictionary(b, start_index=0):
@@ -100,7 +108,7 @@ def decode_dictionary(b, start_index=0):
         # All keys must appear in lexicographical order, i.e. alphabetical order
         return OrderedDict(sorted(decoded_dictionary.items())), start_index + 1
     except (IndexError, ValueError):
-        raise DecodeException('Cannot decode int: invalid bencode provided.')
+        raise DecodeException('Cannot decode dictionary: invalid bencode provided.')
 
 
 """
@@ -123,9 +131,3 @@ decoding_functions = {
     'l': decode_list,
     'd': decode_dictionary,
 }
-
-
-if __name__ == '__main__':
-    print(decode('2:hi')[0])
-    print(decode('li12ei12e4:i12e4:test4:test8:hi worldllllleleeeeee')[0])
-    print(decode('d4:test4:test1:a1:b3:fooi12e1:cd4:test4:testee')[0])
